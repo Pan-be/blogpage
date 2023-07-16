@@ -14,6 +14,7 @@ const contactContent =
 
 const app = express()
 
+let postArr = []
 let year = new Date().getFullYear()
 
 app.set("view engine", "ejs")
@@ -22,7 +23,11 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static("public"))
 
 app.get("/", (req, res) => {
-	res.render("home", { content: homeStartingContent, year: year })
+	res.render("home", {
+		content: homeStartingContent,
+		year: year,
+		posts: postArr,
+	})
 })
 app.get("/about", (req, res) => {
 	res.render("about", { content: aboutContent, year: year })
@@ -38,7 +43,8 @@ app.get("/compose", (req, res) => {
 app.post("/compose", (req, res) => {
 	const title = req.body.postTitle
 	const body = req.body.postBody
-	console.log(getPost(title, body))
+	postArr = [...postArr, getPost(title, body)]
+	res.redirect("/")
 })
 
 app.listen(3000, function () {
