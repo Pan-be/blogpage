@@ -4,6 +4,7 @@ import express from "express"
 import bodyParser from "body-parser"
 import ejs from "ejs"
 import getPost from "./utilities/handlePost.js"
+import _ from "lodash"
 
 const homeStartingContent =
 	"Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing."
@@ -13,6 +14,7 @@ const contactContent =
 	"Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero."
 
 const app = express()
+
 
 let postArr = []
 let year = new Date().getFullYear()
@@ -45,6 +47,19 @@ app.post("/compose", (req, res) => {
 	const body = req.body.postBody
 	postArr = [...postArr, getPost(title, body)]
 	res.redirect("/")
+})
+
+app.get('/posts/:postTitle', (req, res) => {
+	const postTitle = _.lowerCase(req.params.postTitle)
+	postArr.forEach(post => {
+		let transferedTitle = _.lowerCase(post.title)
+		if (postTitle === transferedTitle) {
+			res.render('post', { postTitle: post.title, postBody: post.body, year: year })
+		} else {
+			res.render('post', { postTitle: 'Error', postBody: 'Post not found' })
+		}
+	})
+
 })
 
 app.listen(3000, function () {
