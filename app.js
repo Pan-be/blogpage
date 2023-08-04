@@ -6,12 +6,13 @@ import ejs from "ejs"
 import getPost from "./utilities/handlePost.js"
 import _ from "lodash"
 import mongoose from "mongoose"
+import 'dotenv/config'
 
-const port = process.env.port
+const port = process.env.PORT
 const user = process.env.ADM_NAME
 const password = process.env.ADM_PASSWORD
 
-mongoose.connect(`mongodb + srv://${user}:${password}@cluster0.nkmq9yg.mongodb.net/?retryWrites=true&w=majority`)
+mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.nkmq9yg.mongodb.net/blogDB`)
 
 const homeStartingContent =
 	"Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing."
@@ -22,6 +23,12 @@ const contactContent =
 
 const app = express()
 
+const postSchema = {
+	title: String,
+	content: String
+}
+
+const Post = mongoose.model('Post', postSchema)
 
 let postArr = []
 let year = new Date().getFullYear()
@@ -53,6 +60,14 @@ app.post("/compose", (req, res) => {
 	const title = req.body.postTitle
 	const body = req.body.postBody
 	postArr = [...postArr, getPost(title, body)]
+
+	const post = new Post({
+		title: title,
+		content: body
+	})
+
+	post.save()
+
 	res.redirect("/")
 })
 
