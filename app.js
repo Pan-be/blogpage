@@ -30,7 +30,8 @@ const postSchema = {
 
 const Post = mongoose.model('Post', postSchema)
 
-let postArr = []
+
+
 let year = new Date().getFullYear()
 
 app.set("view engine", "ejs")
@@ -39,10 +40,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static("public"))
 
 app.get("/", (req, res) => {
-	res.render("home", {
-		content: homeStartingContent,
-		year: year,
-		posts: postArr,
+	Post.find({}).then((foundPosts) => {
+		res.render("home", {
+			content: homeStartingContent,
+			year: year,
+			posts: foundPosts,
+		})
 	})
 })
 app.get("/about", (req, res) => {

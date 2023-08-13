@@ -12,8 +12,8 @@
                 <%= post.title %>
             </h1>
             <p>
-                <%= `${post.body.slice(0, 99)}...` %>
-                    <a href="posts/<%= post.title %>" %>>Read more</a>
+                <%= `${post.content.slice(0, 99)}...` %>
+                    <a href="posts/<%= post.title %>">Read more</a>
             </p>
         </div>
         <% }) %>
