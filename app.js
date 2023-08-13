@@ -62,7 +62,6 @@ app.get("/compose", (req, res) => {
 app.post("/compose", (req, res) => {
 	const title = req.body.postTitle
 	const body = req.body.postBody
-	postArr = [...postArr, getPost(title, body)]
 
 	const post = new Post({
 		title: title,
@@ -74,15 +73,18 @@ app.post("/compose", (req, res) => {
 	res.redirect("/")
 })
 
-app.get('/posts/:postTitle', (req, res) => {
-	const postTitle = _.lowerCase(req.params.postTitle)
-	postArr.forEach(post => {
-		let transferedTitle = _.lowerCase(post.title)
-		if (postTitle === transferedTitle) {
-			res.render('post', { postTitle: post.title, postBody: post.body, year: year })
-		} else {
-			res.render('post', { postTitle: 'Error', postBody: 'Post not found' })
-		}
+app.get('/posts/:postId', (req, res) => {
+
+	Post.find({}).then(posts => {
+		const postId = _.lowerCase(req.params.postId)
+		posts.forEach(post => {
+			let transferedId = _.lowerCase(post._id)
+			if (postId === transferedId) {
+				res.render('post', { postTitle: post.title, postBody: post.content, year: year })
+			} else {
+				res.render('post', { postTitle: 'Error', postBody: 'Post not found' })
+			}
+		})
 	})
 
 })
